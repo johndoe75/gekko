@@ -19,7 +19,7 @@
     "prompt-lite": "0.1.x",
     "bitstamp": "0.0.4",
     "async": "0.2.x",
-    "nstore": "*",
+    "nedb": "*",
     "line-reader": "0.2.x"
   },
   "engines": { "node": "0.10.x" },
