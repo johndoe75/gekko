@@ -38,7 +38,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
         else
           tid= 1 + _.max(docs, 'tid').tid;
 
-        log.info(self.name, 'Updating cex.io historical data store');
+        //log.info(self.name, 'Updating cex.io historical data store');
         log.debug(self.name, 'Fetching from tid ' + tid);
 
         self.cexio.trades({since: tid},
