@@ -1,6 +1,8 @@
 var cexio = require('cexio');
 
 var moment = require('moment');
+var nstore = require('nstore');
+nstore= nstore.extend(require('nstore/query')());
 var util = require('../util');
 var _ = require('lodash');
 var log = require('../log')
@@ -10,6 +12,7 @@ var Trader = function(config) {
   this.secret = config.secret;
   this.pair = 'ghs_' + config.currency.toLowerCase();
   this.name = 'cex.io';
+  this.next_tid= 0;
 
   _.bindAll(this);
 
@@ -73,14 +76,21 @@ Trader.prototype.retry = function(method, callback, haste) {
 
 Trader.prototype.getTrades = function(since, callback, descending) {
   if(since && !_.isNumber(since))
-    since = 312283;
+    since= 263000;
+  else
+    since= this.next_tid;
 
   var args = _.toArray(arguments);
-  this.cexio.trades({since: 200000}, _.bind(function(err, trades) {
+  var next_tid= 0;
+  //console.log('fetching since (incl.) tid:' + since);
+
+  this.cexio.trades({since: since}, _.bind(function(err, trades) {
     if(err || !trades)
       return this.retry(this.getTrades, args);
     if(trades.length === 0)
       return this.retry(this.getTrades, args);
+    // remember, where we are for the next fetch
+    this.next_tid= ++(trades[0].tid);
     // cex.io returns descending trade list
     callback(trades.reverse());
   }, this));
