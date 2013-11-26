@@ -13,7 +13,7 @@ config.tradingMethod =  'Exponential Moving Averages';
 // Exponential Moving Averages settings:
 config.EMA = {
   // timeframe per candle
-  interval: 60, // in minutes
+  interval: 1, // in minutes
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line
   short: 10,
@@ -21,16 +21,16 @@ config.EMA = {
   // amount of candles to remember and base initial EMAs on
   candles: 100,
   // the difference between the EMAs (to act as triggers)
-  sellTreshold: -0.25,
-  buyTreshold: 0.25
+  sellTreshold: -0.1,
+  buyTreshold: 0.1
 };
 
 // Monitor the live market
 config.normal = {
   enabled: true,
-  exchange: 'MtGox', // 'MtGox', 'BTCe' or 'Bitstamp'
-  currency: 'USD',
-  asset: 'BTC',
+  exchange: 'cexio', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
+  currency: 'BTC',   // @ cexio we pay BTC
+  asset: 'GHS',      // @ cexio we buy GH/s
   tradingEnabled: false,
   key: '',
   secret: '',
@@ -80,7 +80,7 @@ config.profitCalculator = {
   // only want report after a sell? set to `false`.
   verbose: false,
   // how much fee in % does each trade cost?
-  fee: 0.6
+  fee: 0.0 // no trade fee yet at cex.io
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,9 +109,9 @@ config.backtest = {
 
 // monitor what market?
 config.watch = {
-  exchange: 'MtGox',
-  currency: 'USD',
-  asset: 'BTC'
+  exchange: 'cex.io',
+  currency: 'BTC',
+  asset: 'GHS'
 }
 
 // real trading
@@ -138,6 +138,14 @@ config.traders = [
     password: '',
     currency: 'USD',
     asset: 'BTC',
+    enabled: false
+  },
+  {
+    exchange: 'cex.io',
+    key: '',
+    secret: '',
+    currency: 'BTC',
+    asset: 'GHS',
     enabled: false
   }
 ];
