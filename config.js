@@ -32,6 +32,7 @@ config.normal = {
   currency: 'BTC',   // @ cexio we pay BTC
   asset: 'GHS',      // @ cexio we buy GH/s
   tradingEnabled: false,
+  username: '',      // this option MUST be set for cex.io
   key: '',
   secret: '',
 }
