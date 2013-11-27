@@ -109,6 +109,15 @@ Manager.prototype.checkExchange = function() {
       assets: ['BTC'],
       requires: ['user', 'password'],
       minimalOrder: { amount: 1, unit: 'currency' }
+    },
+    {
+      name: 'cexio',
+      direct: false,
+      infinityOrder: false,
+      currencies: ['BTC'],
+      assets: ['GHS'],
+      requires: ['key', 'secret'],
+      minimalOrder: { amount: 0.000001, unit: 'currency' }
     }
   ];
   var exchange = _.find(exchanges, function(e) { return e.name === this.exchangeSlug }, this);
@@ -235,8 +244,14 @@ Manager.prototype.getMinimum = function(price) {
 // the asset, if so BUY and keep track of the order
 // (amount is in asset quantity)
 Manager.prototype.buy = function(amount, price) {
+  // sometimes cex.io specifies a price w/ > 8 decimals
+  price *= 100000000;
+  price = Math.ceil(price);
+  price /= 100000000;
+
   var currency = this.getFund(this.currency);
   var minimum = this.getMinimum(price);
+
   if(amount > minimum) {
     log.info('attempting to BUY', this.asset, 'at', this.exchange.name);
     this.exchange.buy(amount, price, this.noteOrder);
@@ -249,6 +264,11 @@ Manager.prototype.buy = function(amount, price) {
 // the asset, if so SELL and keep track of the order
 // (amount is in asset quantity)
 Manager.prototype.sell = function(amount, price) {
+  // sometimes cex.io specifies a price w/ > 8 decimals
+  price *= 100000000;
+  price = Math.ceil(price);
+  price /= 100000000;
+
   var asset = this.getFund(this.asset);
   var minimum = this.getMinimum(price);
   if(amount > minimum) {
