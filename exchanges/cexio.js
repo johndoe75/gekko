@@ -99,8 +99,11 @@ Trader.prototype.buy = function(amount, price, callback) {
   log.debug('BUY', amount, 'GHS @', price, 'BTC');
 
   var set = function(err, data) {
-    if(err || data.err)
-      log.error('unable to buy:', err);
+    if(err)
+      return log.error('unable to buy:', err);
+    if(data.error)
+      return log.error('unable to buy:', data.error);
+
     log.debug('BUY order placed.  Order ID', data.id);
     callback(data.id);
   };
@@ -121,8 +124,11 @@ Trader.prototype.sell = function(amount, price, callback) {
   log.debug('SELL', amount, 'GHS @', price, 'BTC');
 
   var set = function(err, data) {
-    if(err || data.err)
-      log.error('unable to sell:', err);
+    if(err)
+      return log.error('unable to sell:', err);
+    if(data.error)
+      return log.error('unable to sell:', data.error);
+
     log.debug('SELL order placed.  Order ID', data.id);
     callback(data.id);
   };
@@ -190,6 +196,8 @@ Trader.prototype.checkOrder = function(order, callback) {
 
     if(err)
       callback(false, true);
+    if(result.error)
+      callback(false, true);
 
     var exists= false;
     _.forEach(result, function(entry) {
@@ -205,8 +213,10 @@ Trader.prototype.checkOrder = function(order, callback) {
 
 Trader.prototype.cancelOrder = function(order) {
   var check= function(err, result) {
-    if(err || result.err)
-      log.info('cancel order failed ' + err);
+    if(err)
+      log.error('cancel order failed:', err);
+    if(result.error)
+      log.error('cancel order failed:', result.error);
   }
   this.cexio.cancel_order(order, check);
 }
