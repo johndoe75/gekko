@@ -184,7 +184,6 @@ Trader.prototype.getFee = function(callback) {
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
-  log.debug('checkOrder', 'id', order);
   var check = function(err, result) {
 
     if(err)
@@ -193,11 +192,9 @@ Trader.prototype.checkOrder = function(order, callback) {
     var exists= false;
     _.forEach(result, function(entry) {
       if(entry.id===order) {
-        console.log(entry.id, ' ', order);
         exists= true; return;
       }
     });
-    console.log(exists);
     callback(err, !exists);
   };
 
@@ -205,11 +202,11 @@ Trader.prototype.checkOrder = function(order, callback) {
 }
 
 Trader.prototype.cancelOrder = function(order) {
-  log.debug('cancelOrder', 'id', order);
-  var devNull = function(err, result) {
-    log.debug('cancelOrder', err, result);
+  var check= function(err, result) {
+    if(err || result.err)
+      log.info('cancel order failed ' + err);
   }
-  this.cexio.cancel_order(order, devNull);
+  this.cexio.cancel_order(order, check);
 }
 
 module.exports = Trader;
