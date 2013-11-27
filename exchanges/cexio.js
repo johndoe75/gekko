@@ -8,6 +8,7 @@ var cexio= require('cexio'),
       log= require('../log');
 
 var Trader = function(config) {
+  this.user = config.username;
   this.key = config.key;
   this.secret = config.secret;
   this.pair = 'ghs_' + config.currency.toLowerCase();
@@ -16,9 +17,8 @@ var Trader = function(config) {
 
   _.bindAll(this);
 
-  // this.cexio = new cexio(this.key, this.secret);
-  this.cexio= new cexio(this.pair);
-
+  this.cexio= new cexio(this.pair, this.user,
+                        this.key, this.secret);
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
@@ -93,18 +93,18 @@ Trader.prototype.buy = function(amount, price, callback) {
   amount = Math.floor(amount);
   amount /= 100000000;
 
-  var set = function(err, data) {
-    if(err)
-      log.error('unable to buy:', err);
+  price/=10; price= price.toFixed(8);
 
-    callback(data.order_id);
+  log.debug('BUY', amount, 'GHS @', price, 'BTC');
+
+  var set = function(err, data) {
+    if(err || data.err)
+      log.error('unable to buy:', err);
+    log.debug('BUY order placed.  Id', data.id);
+    callback(data.id);
   };
 
-  // workaround for nonce error
-  setTimeout(_.bind(function() {
-    this.cexio.place_order('buy', 
-      amount, price, _.bind(set, this));
-  }, this), 1000);
+  this.cexio.place_order('buy', amount, price, _.bind(set, this));
 }
 
 Trader.prototype.sell = function(amount, price, callback) {
@@ -114,18 +114,18 @@ Trader.prototype.sell = function(amount, price, callback) {
   amount = Math.ceil(amount);
   amount /= 100000000;
 
-  var set = function(err, data) {
-    if(err)
-      log.error('unable to sell:', err);
+  price*=10; price= price.toFixed(8);
 
-    callback(err, data.order_id);
+  log.debug('SELL', amount, 'GHS @', price, 'BTC');
+
+  var set = function(err, data) {
+    if(err || data.err)
+      log.error('unable to sell:', err);
+    log.debug('SELL order placed.  Id', data.id);
+    callback(err, data.id);
   };
 
-  // workaround for nonce error
-  setTimeout(_.bind(function() {
-    this.cexio.place_order('sell',
-      amount, price, _.bind(set, this));
-  }, this), 1000);
+  this.cexio.place_order('sell', amount, price, _.bind(set, this));
 }
 
 // if cex.io errors we try the same call again after
@@ -156,54 +156,60 @@ Trader.prototype.getPortfolio = function(callback) {
     if(err)
       return this.retry(this.cexio.getInfo, calculate);
 
-    var portfolio = [];
-    _.each(data.funds, function(amount, asset) {
-      portfolio.push({name: asset.toUpperCase(), amount: amount});
-    });
+    currency= parseFloat(data.BTC.available) - parseFloat(data.BTC.orders);
+    assets=   parseFloat(data.GHS.available) - parseFloat(data.GHS.orders);
+
+    var portfolio= [];
+    portfolio.push({name: 'BTC', amount: currency});
+    portfolio.push({name: 'GHS', amount: assets});
     callback(err, portfolio);
   }
-  this.cexio.getInfo(_.bind(calculate, this));
+  this.cexio.balance(_.bind(calculate, this));
 }
 
 Trader.prototype.getTicker = function(callback) {
-  // cexio-e doesn't state asks and bids in its ticker
   var set = function(err, data) {
-    var ticker = _.extend(data.ticker, {
-      ask: data.ticker.buy,
-      bid: data.ticker.sell
-    });
+    var ticker= {
+      ask: data.ask,
+      bid: data.bid
+    };
     callback(err, ticker);
   }
-  this.cexio.ticker(this.pair, _.bind(set, this));
+  this.cexio.ticker(_.bind(set, this));
 }
 
 Trader.prototype.getFee = function(callback) {
-  // cexio-e doesn't have different fees based on orders
-  // at this moment it is always 0.2%
-  callback(false, 0.002);
+  // cexio does currently don't take a fee on trades
+  callback(false, 0.0);
 }
 
 Trader.prototype.checkOrder = function(order, callback) {
+  log.debug('checkOrder', 'id', order);
   var check = function(err, result) {
-    // cexio returns an error when you have no open trades
-    // right now we assume on every error that the order
-    // was filled.
-    //
-    // TODO: check whether the error stats that there are no
-    // open trades or that there is something else.
+
     if(err)
       callback(false, true);
-    else
-      callback(err, !result[order]);
+
+    var exists= false;
+    _.forEach(result, function(entry) {
+      if(entry.id===order) {
+        console.log(entry.id, ' ', order);
+        exists= true; return;
+      }
+    });
+    console.log(exists);
+    callback(err, !exists);
   };
 
-  this.cexio.orderList({}, _.bind(check, this));
+  this.cexio.open_orders(_.bind(check, this));
 }
 
 Trader.prototype.cancelOrder = function(order) {
-  // TODO: properly test
-  var devNull = function() {}
-  this.cexio.cancel_order(null, devNull, order);
+  log.debug('cancelOrder', 'id', order);
+  var devNull = function(err, result) {
+    log.debug('cancelOrder', err, result);
+  }
+  this.cexio.cancel_order(order, devNull);
 }
 
 module.exports = Trader;
