@@ -253,11 +253,15 @@ Manager.prototype.buy = function(amount, price) {
   var minimum = this.getMinimum(price);
 
   if(amount > minimum) {
-    log.info('attempting to BUY', this.asset, 'at', this.exchange.name);
+    log.info('attempting to BUY',
+             amount, this.asset,
+             'at', this.exchange.name);
     this.exchange.buy(amount, price, this.noteOrder);
     this.action = 'BUY';
   } else
-    log.info('wanted to buy but insufficient', this.currency, '(' + amount * price + ') at', this.exchange.name);
+    log.info('wanted to buy but insufficient',
+             this.currency,
+             '(' + amount * price + ') at', this.exchange.name);
 }
 
 // first do a quick check to see whether we can sell
@@ -272,11 +276,15 @@ Manager.prototype.sell = function(amount, price) {
   var asset = this.getFund(this.asset);
   var minimum = this.getMinimum(price);
   if(amount > minimum) {
-    log.info('attempting to SELL', this.asset, 'at', this.exchange.name);
+    log.info('attempting to SELL',
+             amount, this.asset,
+             'at', this.exchange.name);
     this.exchange.sell(amount, price, this.noteOrder);
     this.action = 'SELL';
   } else
-    log.info('wanted to sell but insufficient', this.asset, '(' + amount + ') at', this.exchange.name);
+    log.info('wanted to sell but insufficient',
+             this.asset,
+             '(' + amount + ') at', this.exchange.name);
 }
 
 Manager.prototype.noteOrder = function(order) {
