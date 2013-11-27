@@ -80,58 +80,6 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     if(err) return log.error(self.name, 'error: ' + err);
     callback(result);
   });
-
-
-
-  // let the db reflect the latest trades from cex.io
-  // db.find({}, function(err, docs) {
-  //   console.log(_.max(docs, 'tid'));
-  //   if(!docs || docs.length === 0)
-  //     last_tid= 263000;
-  //   else
-  //     last_tid= _.max(docs, 'tid').tid;
-
-  //   next_tid= 1 + last_tid;
-
-  //   var args= _.toArray(arguments);
-  //   log.debug(self.name, 'Fetching from txid ' + next_tid);
-  //   self.cexio.trades({since: next_tid},
-  //     function(err, trades) {
-  //       if(err || !trades || trades.length === 0)
-  //         return self.retry(self.getTrades, args);
-  //       // cex.io deliver them in desc order
-  //       trades= trades.reverse();
-  //       _.forEach(trades, function(trade) {
-  //         // log.debug(self.name, 'storing tid ' + trade.tid);
-  //         db.insert(trade);
-  //       });
-
-  //       db.find({date: {$gt: (since / 1000)}}, function(err, docs)) {
-  //       }
-
-  //       db.find({}, function(err, docs) {});
-  //   }, this);
-  // });
-
-
-  // if(since && !_.isNumber(since))
-  //   since= 263000;
-  // else
-  //   since= this.next_tid;
-
-  // var next_tid= 0;
-  // //console.log('fetching since (incl.) tid:' + since);
-
-  // this.cexio.trades({since: since}, _.bind(function(err, trades) {
-  //   if(err || !trades)
-  //     return this.retry(this.getTrades, args);
-  //   if(trades.length === 0)
-  //     return this.retry(this.getTrades, args);
-  //   // remember, where we are for the next fetch
-  //   this.next_tid= ++(trades[0].tid);
-  //   // cex.io returns descending trade list
-  //   callback(trades.reverse());
-  // }, this));
 }
 
 Trader.prototype.buy = function(amount, price, callback) {
