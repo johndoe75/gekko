@@ -44,7 +44,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
         self.cexio.trades({since: tid},
           function(err, trades) {
             if(err || !trades || trades.length === 0)
-              self.retry(self.getTrades, args);
+              return self.retry(self.getTrades, args);
             else {
               trades= trades.reverse();
               _.forEach(trades, function(trade) {
@@ -72,7 +72,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
         docs= _.sortBy(docs, 'tid');
         // log.debug(self.name, docs);
         if(!docs || docs.length === 0)
-          self.retry(self.getTrades, args);
+          return self.retry(self.getTrades, args);
         callback(null, docs);
       });
     }
