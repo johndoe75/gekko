@@ -13,7 +13,7 @@ config.tradingMethod =  'Exponential Moving Averages';
 // Exponential Moving Averages settings:
 config.EMA = {
   // timeframe per candle
-  interval: 1, // in minutes
+  interval: 10, // in minutes
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line
   short: 10,
