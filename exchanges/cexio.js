@@ -30,6 +30,10 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
   var args = _.toArray(arguments);
 
+  // FIXME:  fetching and updating our db shall be done in an seperate
+  // thread (timeout-callback) rather than here.  This method shall
+  // only fetch and return from local db.
+
   async.waterfall([
     function(callback) {
       db.find({}, function(err, docs) {
@@ -39,7 +43,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
           tid= 1 + _.max(docs, 'tid').tid;
 
         //log.info(self.name, 'Updating cex.io historical data store');
-        log.debug(self.name, 'Fetching from tid ' + tid);
+        log.debug(self.name, 'fetching from tid ' + tid);
 
         self.cexio.trades({since: tid},
           function(err, trades) {
