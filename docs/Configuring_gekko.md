@@ -35,12 +35,12 @@ You have to tell Gekko what market to monitor on the selected exchange, A market
   currencies: USD, EUR, RUR  
   assets: BTC
 
-* Bitstamp:
+* Bitstamp:  
   currencies: USD  
   assets: BTC
   
-* cex.io:
-  currencies: BTC, NMC (not yet supported)
+* cex.io:  
+  currencies: BTC, *NMC (not yet supported)*  
   assets: GHS
 
 *Even though Bitcoin is a currency Gekko treats is like an asset when you are trading USD vs BTC.*
