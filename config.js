@@ -28,11 +28,10 @@ config.EMA = {
 // Monitor the live market
 config.normal = {
   enabled: true,
-  exchange: 'cexio', // 'MtGox', 'BTCe', 'Bitstamp' or 'cexio'
-  currency: 'BTC',   // @ cexio we pay BTC
-  asset: 'GHS',      // @ cexio we buy GH/s
+  exchange: 'MtGox', // 'MtGox', 'BTCe' or 'Bitstamp'
+  currency: 'USD',
+  asset: 'BTC',
   tradingEnabled: false,
-  username: '',      // this option MUST be set for cex.io
   key: '',
   secret: '',
 }
@@ -48,6 +47,19 @@ config.normal = {
 //   user: '',
 //   password: '',
 // }
+
+// example cex.io config;
+
+//config.normal = {
+//  enabled: true,
+//  exchange: 'cexio',
+//  currency: 'BTC',   // @ cexio we pay BTC
+//  asset: 'GHS',      // @ cexio we buy GH/s
+//  tradingEnabled: false,
+//  username: '',      // this option MUST be set for cex.io
+//  key: '',
+//  secret: '',
+//}
 
 // want Gekko to send a mail on buy or sell advice?
 config.mail = {
