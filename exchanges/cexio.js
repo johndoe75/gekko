@@ -176,8 +176,6 @@ Trader.prototype.sell = function(amount, price, callback) {
   }, this), 1000);
 }
 
-// if cex.io errors we try the same call again after
-// 5 seconds or half a second if there is haste
 Trader.prototype.retry = function(method, args) {
   var wait = +moment.duration(10, 'seconds');
   log.debug(this.name, 'returned an error, retrying..');
