@@ -13,7 +13,7 @@ config.tradingMethod =  'Exponential Moving Averages';
 // Exponential Moving Averages settings:
 config.EMA = {
   // timeframe per candle
-  interval: 10, // in minutes
+  interval: 60, // in minutes
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line
   short: 10,
@@ -61,6 +61,7 @@ config.normal = {
 //  secret: '',
 //}
 
+
 // want Gekko to send a mail on buy or sell advice?
 config.mail = {
   enabled: false,
@@ -93,7 +94,7 @@ config.profitCalculator = {
   // only want report after a sell? set to `false`.
   verbose: false,
   // how much fee in % does each trade cost?
-  fee: 0.0 // no trade fee yet at cex.io
+  fee: 0.6
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -122,9 +123,9 @@ config.backtest = {
 
 // monitor what market?
 config.watch = {
-  exchange: 'cex.io',
-  currency: 'BTC',
-  asset: 'GHS'
+  exchange: 'MtGox',
+  currency: 'USD',
+  asset: 'BTC'
 }
 
 // real trading
@@ -166,3 +167,4 @@ config.traders = [
 config.debug = false; // for additional logging / debugging
 
 module.exports = config;
+
