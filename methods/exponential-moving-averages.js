@@ -132,11 +132,11 @@ TradingMethod.prototype.advice = function() {
   // @ cexio we need to be more precise due to low prices
   // and low margins on trade.  All others use 3 digist.
 
-  var diff= _.last(this.ema.diff).toFixed(3),
+  var diff = _.last(this.ema.diff).toFixed(3),
       price = _.last(this.candles.close).toFixed(8);
 
   if(config.normal.exchange !== 'cexio')
-    price= price.toFixed(3);
+    price = price.toFixed(3);
 
   var message = '@ ' + price + ' (' + diff + ')';
 
