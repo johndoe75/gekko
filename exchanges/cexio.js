@@ -1,11 +1,11 @@
-var cexio= require('cexio'),
-   moment= require('moment'),
-     nedb= require('nedb'),
-    async= require('async'),
-       db= new nedb({filename: 'cexio.db', autoload: true}),
-        _= require('lodash'),
-     util= require('../util'),
-      log= require('../log');
+var cexio = require('cexio'),
+   moment = require('moment'),
+     nedb = require('nedb'),
+    async = require('async'),
+       db = new nedb({filename: 'cexio.db', autoload: true}),
+        _ = require('lodash'),
+     util = require('../util'),
+      log = require('../log');
 
 var Trader = function(config) {
   this.user = config.username;
@@ -13,17 +13,17 @@ var Trader = function(config) {
   this.secret = config.secret;
   this.pair = 'ghs_' + config.currency.toLowerCase();
   this.name = 'cex.io';
-  this.next_tid= 0;
+  this.next_tid = 0;
 
   _.bindAll(this);
 
-  this.cexio= new cexio(this.pair, this.user,
+  this.cexio = new cexio(this.pair, this.user,
                         this.key, this.secret);
 }
 
 Trader.prototype.getTrades = function(since, callback, descending) {
-  var self= this;
-  var last_tid= next_tid= 0;
+  var self = this;
+  var last_tid = next_tid = 0;
 
   if(since && !_.isNumber(since))
     since = util.toMicro(since);
@@ -38,9 +38,9 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     function(callback) {
       db.find({}, function(err, docs) {
         if(!docs || docs.length === 0)
-          tid= 263000;
+          tid = 263000;
         else
-          tid= 1 + _.max(docs, 'tid').tid;
+          tid = 1 + _.max(docs, 'tid').tid;
 
         //log.info(self.name, 'Updating cex.io historical data store');
         log.debug(self.name, 'fetching from tid ' + tid);
@@ -50,13 +50,13 @@ Trader.prototype.getTrades = function(since, callback, descending) {
             if(err || !trades || trades.length === 0)
               return self.retry(self.getTrades, args);
             else {
-              trades= trades.reverse();
+              trades = trades.reverse();
               _.forEach(trades, function(trade) {
                 // convert to int
-                trade.amount= Number(trade.amount);
-                trade.price= Number(trade.price);
-                trade.tid= Number(trade.tid);
-                trade.date= Number(trade.date);
+                trade.amount = Number(trade.amount);
+                trade.price = Number(trade.price);
+                trade.tid = Number(trade.tid);
+                trade.date = Number(trade.date);
                 db.insert(trade);
               });
             }
@@ -66,14 +66,14 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     },
     function(callback) {
       if(!since) {
-        since= new Date().getTime() * 1000;
-        since-= (10 * 1000 * 1000);
+        since = new Date().getTime() * 1000;
+        since -= (10 * 1000 * 1000);
       }
-      since= Math.floor(since / 1000 / 1000);
+      since = Math.floor(since / 1000 / 1000);
       log.debug('fetching since ' + since);
 
       db.find({'date': {$gte: since}}, function(err, docs) {
-        docs= _.sortBy(docs, 'tid');
+        docs = _.sortBy(docs, 'tid');
         // log.debug(self.name, docs);
         if(!docs || docs.length === 0)
           return self.retry(self.getTrades, args);
@@ -94,7 +94,7 @@ Trader.prototype.buy = function(amount, price, callback) {
   amount /= 100000000;
 
   // test placing orders which will not be filled
-  //price/=10; price= price.toFixed(8);
+  //price /=10; price = price.toFixed(8);
 
   log.debug('BUY', amount, 'GHS @', price, 'BTC');
 
@@ -116,7 +116,7 @@ Trader.prototype.sell = function(amount, price, callback) {
   amount /= 100000000;
 
   // test placing orders which will not be filled
-  //price*=10; price= price.toFixed(8);
+  //price *= 10; price = price.toFixed(8);
 
   log.debug('SELL', amount, 'GHS @', price, 'BTC');
 
@@ -158,10 +158,10 @@ Trader.prototype.getPortfolio = function(callback) {
     if(err)
       return this.retry(this.cexio.getInfo, calculate);
 
-    currency= parseFloat(data.BTC.available) - parseFloat(data.BTC.orders);
-    assets=   parseFloat(data.GHS.available) - parseFloat(data.GHS.orders);
+    currency = parseFloat(data.BTC.available) - parseFloat(data.BTC.orders);
+    assets =   parseFloat(data.GHS.available) - parseFloat(data.GHS.orders);
 
-    var portfolio= [];
+    var portfolio = [];
     portfolio.push({name: 'BTC', amount: currency});
     portfolio.push({name: 'GHS', amount: assets});
     callback(err, portfolio);
@@ -171,7 +171,7 @@ Trader.prototype.getPortfolio = function(callback) {
 
 Trader.prototype.getTicker = function(callback) {
   var set = function(err, data) {
-    var ticker= {
+    var ticker = {
       ask: data.ask,
       bid: data.bid
     };
@@ -191,10 +191,10 @@ Trader.prototype.checkOrder = function(order, callback) {
     if(err)
       callback(false, true);
 
-    var exists= false;
+    var exists = false;
     _.forEach(result, function(entry) {
-      if(entry.id===order) {
-        exists= true; return;
+      if(entry.id === order) {
+        exists = true; return;
       }
     });
     callback(err, !exists);
@@ -204,7 +204,7 @@ Trader.prototype.checkOrder = function(order, callback) {
 }
 
 Trader.prototype.cancelOrder = function(order) {
-  var check= function(err, result) {
+  var check = function(err, result) {
     if(err || result.err)
       log.info('cancel order failed ' + err);
   }
