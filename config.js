@@ -13,7 +13,7 @@ config.tradingMethod =  'Exponential Moving Averages';
 // Exponential Moving Averages settings:
 config.EMA = {
   // timeframe per candle
-  interval: 1, // in minutes
+  interval: 10, // in minutes
   // EMA weight (α)
   // the higher the weight, the more smooth (and delayed) the line
   short: 10,
@@ -21,8 +21,8 @@ config.EMA = {
   // amount of candles to remember and base initial EMAs on
   candles: 100,
   // the difference between the EMAs (to act as triggers)
-  sellTreshold: -0.1,
-  buyTreshold: 0.1
+  sellTreshold: -0.25,
+  buyTreshold: 0.25
 };
 
 // Monitor the live market
@@ -32,6 +32,7 @@ config.normal = {
   currency: 'BTC',   // @ cexio we pay BTC
   asset: 'GHS',      // @ cexio we buy GH/s
   tradingEnabled: false,
+  username: '',      // this option MUST be set for cex.io
   key: '',
   secret: '',
 }
